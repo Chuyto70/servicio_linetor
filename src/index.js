@@ -1,5 +1,5 @@
 const express = require('express')
-const { getConnection } = require('./service.cjs')
+const { getConnection } = require('./service.js')
 const cors = require('cors')
 const app = express()   
 app.use(cors())
