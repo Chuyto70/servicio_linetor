@@ -20,6 +20,20 @@ app.get('/', async (req,res)=>{
 
   res.json(user)
 })
+
+app.get('/reservas/:id', async(req, res) =>{
+  let id = req.params.id
+  let pool = await getConnection()
+
+  let { recordsets:reservas } = await pool.request().query`
+  SELECT * FROM [db_a379f5_linetor].[dbo].[AV_RESERVAS]
+  WHERE id_propiedad = ${id}
+  `
+
+  res.json({data: reservas[0]})
+  console.log(id)
+})
+
 app.listen(2727, () => {
     console.log('servidor en el puerto 2727')
 })
