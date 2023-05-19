@@ -111,7 +111,8 @@ app.get('/facturas/:id', async (req, res) => {
 //LOGIN DE USUARIO
 app.post('/', async (req,res)=>{
   let reqBody = {id:req.body.user, password:req.body.password}
- 
+  console.log('HOLA REQ')
+  console.log(reqBody)
   try {
   let pool = await getConnection()
 
@@ -120,7 +121,7 @@ app.post('/', async (req,res)=>{
   FROM [FOXCLEA_TAREAS].[foxclea_tareas].[AV_PROPIETARIOS]
   where WEBUSER = ${reqBody.id}`
 
-  await sql.close()
+ 
   let dataUser = propietarioUser[0][0]
 
   if(dataUser){
@@ -128,16 +129,18 @@ app.post('/', async (req,res)=>{
      const {recordsets: propiedadesUser} = await pool.request().query`SELECT ID_PROPIEDAD, ID_PROPIETARIO, NOMBRE, NOMBRE_PROPIEDAD, DIMENSIONES, MEDIDA, DORMITORIOS, BAÑOS, PRECIO, TELEFONO, MOVIL, ESTRELLAS, DIRECCION, codigo_postal, CORREO_PRINCIPAL, PAIS, USUARIO_ID, EMAIL, PROVINCIA
       FROM [FOXCLEA_TAREAS].[foxclea_tareas].[AV_PROPIEDADES]
       where ID_PROPIETARIO = ${dataUser.ID_PROPIETARIO}`
-      
+       await sql.close()
      const user = {
      propietaro:propietarioUser[0][0],
      propiedades:propiedadesUser[0]
    }
      res.status(200).json({user})
     }else{
+       await sql.close()
      res.status(403).json({ok:false, message:'Usuario o contraseña incorrecta'})
     }
     }else{
+       await sql.close()
      res.status(403).json({ok:false, message:'Usuario no existe'})
     
     }
