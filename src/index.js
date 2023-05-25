@@ -86,15 +86,14 @@ app.get('/facturas/:id', async (req, res) => {
 
   let { recordsets:facturas } = await pool.request().query`
   SELECT A.CONTRA_ID, A.CLIENTE_ID,F.NOMBRE AS NOMBRE_CLIENTE, B.ID_PROPIEDAD, B.NOMBRE_PROPIEDAD, C.NOMBRE AS NOMBRE_PROPIETARIO, 
-    D.ID_RESERVA, E.NUMERO, E.fecha, E.concepto1, J.fe_cobro, J.asienco, J.ptadebe, J.ptahaber, J.subcta, G.CONCEPTO FROM FOXCLEA_TAREAS.BMCONTRA A 
+     E.NUMERO, E.fecha, E.concepto1, J.fe_cobro, J.asienco, J.ptadebe, J.ptahaber, G.CONCEPTO FROM FOXCLEA_TAREAS.BMCONTRA A 
     INNER JOIN FOXCLEA_TAREAS.AV_PROPIEDADES B ON B.ID_PROPIEDAD = A.PROPIEDAD_ID 
     INNER JOIN FOXCLEA_TAREAS.AV_PROPIETARIOS C ON C.ID_PROPIETARIO = B.ID_PROPIETARIO
-    INNER JOIN FOXCLEA_TAREAS.AV_RESERVAS D ON D.ID_PROPIEDAD = A.PROPIEDAD_ID
     INNER JOIN FOXCLEA_TAREAS.bmfactu E ON E.CLIENTE_ID = A.CLIENTE_ID
     INNER JOIN FOXCLEA_TAREAS.BMCLIENTE F ON F.CLIENTE_ID = A.CLIENTE_ID
     INNER JOIN FOXCLEA_TAREAS.bmdiario J ON J.factura = E.NUMERO
     INNER JOIN FOXCLEA_TAREAS.BMFDETALLE G ON G.FACTURA = E.NUMERO
-    WHERE C.ID_PROPIETARIO = ${id} AND J.ptadebe > 0
+    WHERE C.ID_PROPIETARIO = ${id} AND J.ptadebe > 0 AND E.fecha >= DATEFROMPARTS(2023, 4, 1)
   `
    await sql.close()
   res.json({facturas:facturas[0]})
@@ -140,7 +139,7 @@ app.post('/', async (req,res)=>{
      res.status(403).json({ok:false, message:'Usuario o contraseña incorrecta'})
     }
     }else{
-       await sql.close()
+      
      res.status(403).json({ok:false, message:'Usuario no existe'})
     
     }
