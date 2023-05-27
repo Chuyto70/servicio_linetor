@@ -96,25 +96,8 @@ app.get('/facturas/:id', async (req, res) => {
     WHERE C.ID_PROPIETARIO = ${id} AND J.ptadebe > 0 AND E.fecha >= DATEFROMPARTS(2023, 4, 1)
   `
    await sql.close()
-    let facturasSinFecha = []
-    let facturasConFecha = []
-    let facturasUnicas = [
-      {
-"CONTRA_ID": 4401,
-"CLIENTE_ID": 5539,
-"NOMBRE_CLIENTE": "PRUEBA                                                           ",
-"ID_PROPIEDAD": 213,
-"NOMBRE_PROPIEDAD": "AV. PRUEBA LINETOR                                ",
-"NOMBRE_PROPIETARIO": "PRUEBA WEB                                        ",
-"NUMERO": "58A3050001",
-"fecha": "2023-05-13T00:00:00.000Z",
-"concepto1": "LIQUIDACION MES DE MAYO 2023 PRUEBA                                                                 ",
-"fe_cobro": null,
-"asienco": 0,
-"ptadebe": 70,
-"ptahaber": 0,
-"CONCEPTO": "R2044444444400                         "
-}
+
+let facturasUnicas = [
     ]
     
 facturas[0].map(fact => {
