@@ -96,7 +96,106 @@ app.get('/facturas/:id', async (req, res) => {
     WHERE C.ID_PROPIETARIO = ${id} AND J.ptadebe > 0 AND E.fecha >= DATEFROMPARTS(2023, 4, 1)
   `
    await sql.close()
-  res.json({facturas:facturas[0]})
+    let facturasSinFecha = []
+    let facturasConFecha = []
+    let facturasUnicas = [
+      {
+"CONTRA_ID": 4401,
+"CLIENTE_ID": 5539,
+"NOMBRE_CLIENTE": "PRUEBA                                                           ",
+"ID_PROPIEDAD": 213,
+"NOMBRE_PROPIEDAD": "AV. PRUEBA LINETOR                                ",
+"NOMBRE_PROPIETARIO": "PRUEBA WEB                                        ",
+"NUMERO": "58A3050001",
+"fecha": "2023-05-13T00:00:00.000Z",
+"concepto1": "LIQUIDACION MES DE MAYO 2023 PRUEBA                                                                 ",
+"fe_cobro": null,
+"asienco": 0,
+"ptadebe": 70,
+"ptahaber": 0,
+"CONCEPTO": "R2044444444400                         "
+}
+    ]
+    
+facturas[0].map(fact => {
+
+let ind = facturasUnicas.findIndex(obj => obj.CONCEPTO === fact.CONCEPTO);
+
+let factAsienco = fact.asienco;
+let factConcepto = fact.CONCEPTO;
+let unicoAsienco = ind !== -1 ? facturasUnicas[ind].asienco : null;
+let unicoConcepto = ind !== -1 ? facturasUnicas[ind].CONCEPTO : null;
+
+switch (true) {
+case ind === -1:
+facturasUnicas.push(fact);
+break;
+
+case factAsienco !== 0 && unicoAsienco === 0:
+facturasUnicas[ind] = fact;
+break;
+
+case factAsienco !== 0 && unicoAsienco !== 0:
+if (factConcepto !== unicoConcepto) {
+facturasUnicas.push(fact);
+}
+break;
+
+default:
+console.log('PRIMER ELSE');
+break;
+}
+});
+
+
+facturas[0].map(fact=>{
+  let ind = facturasUnicas.findIndex(obj=>obj.CONCEPTO === fact.CONCEPTO)
+  console.log(ind)
+  if(ind !== -1){
+    console.log(fact.CONCEPTO +" asienco: "+ fact.asienco)
+    if((facturasUnicas[ind].asienco === 0 && fact.asienco !==0) || 
+        (facturasUnicas[ind].asienco === 0 && fact.asienco === 0 && fact.asienco > facturasUnicas[ind].asienco)   ){
+      console.log('IF 1 : '+facturasUnicas[ind].asienco + " POR " + fact.asienco)
+      facturasUnicas[ind] = fact
+    }
+    else if( facturasUnicas[ind].asienco === 0 && fact.CONCEPTO !== facturasUnicas[ind].CONCEPTO  ){
+
+      facturasUnicas.push(fact)
+            console.log('IF 2 ASIENCO: ' + fact.asienco +"  CONCEPTO: "+ fact.CONCEPTO)
+
+    }
+     else if( (fact.asienco === 0 &&  facturasUnicas[ind].CONCEPTO !== fact.CONCEPTO) && facturasUnicas[ind].asienco !== 0 ){
+            console.log('IF 3')
+
+      facturasUnicas[ind] = fact
+    }
+    else if( (fact.asienco !== 0 && facturasUnicas[ind].asienco ===0) && (fact.CONCEPTO !== facturasUnicas[ind].CONCEPTO) ){
+       
+      console.log('IF 4')
+      facturasUnicas.push(fact)
+    }
+    else if((fact.asienco !== 0 && facturasUnicas[ind].asienco ===0) && (fact.CONCEPTO === facturasUnicas[ind].CONCEPTO)){
+      console.log('IF 5')
+     facturasUnicas[ind] = fact
+    }
+    else if(fact.asienco !== 0 && fact.CONCEPTO !== facturasUnicas[ind].CONCEPTO){
+      facturasUnicas.push(fact)
+      console.log('IF 6')
+    }else{
+
+      console.log('PRIMER ELSE')
+    }
+
+  }else{
+    console.log(' ultimo esle ' + fact.CONCEPTO)
+    facturasUnicas.push(fact)
+
+  }
+})
+
+console.log(facturasUnicas.length)
+
+  res.json({facturas:facturasUnicas})
   } catch (error) {
     res.status(400).json({
       ok:false,
