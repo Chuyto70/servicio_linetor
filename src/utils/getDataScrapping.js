@@ -1,12 +1,13 @@
-const puppeteer = require('puppeteer');
+
 
 
 async function getDataScrapping (ciudad = 'Holanda', camas = '4'){
-    
-    try {
-           const browser = await puppeteer.launch({
+    const puppeteer = require('puppeteer');
+    const browser = await puppeteer.launch({
     headless: false
     });
+    try {
+          
 
     const page = await browser.newPage()
 
