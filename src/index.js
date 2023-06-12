@@ -3,7 +3,9 @@ const bodyParser = require('body-parser')
 const sql = require('mssql')
 const { getConnection } = require('./service.js')
 const cors = require('cors')
+const { getDataScrapping } = require('./utils/getDataScrapping.js')
 const app = express()   
+
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -234,6 +236,27 @@ app.post('/', async (req,res)=>{
     })
   }
 
+})
+
+
+app.post('/obtenertarifa', async(req,res)=>{
+  let ciudad = req.body.ciudad
+  let habitaciones = req.body.habitaciones
+  let tarifas = await getDataScrapping(ciudad,habitaciones);
+
+  if(tarifas.ok){
+    if(tarifas.precio.p.length <3){
+      res.status(400).json({
+        ok:false,
+        msg:'Vuelva a intentarlo'
+      })
+    }else{
+
+      res.status(200).json(tarifas)
+    }
+  }else{
+    res.status(400).json(tarifas)
+  }
 })
 
 app.listen(2727, () => {
