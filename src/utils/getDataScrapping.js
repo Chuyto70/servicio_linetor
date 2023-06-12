@@ -4,7 +4,8 @@
 async function getDataScrapping (ciudad = 'Holanda', camas = '4'){
     const puppeteer = require('puppeteer');
     const browser = await puppeteer.launch({
-    headless: false
+    headless: false,
+    args: ["--no-sandbox"]
     });
     try {
           
