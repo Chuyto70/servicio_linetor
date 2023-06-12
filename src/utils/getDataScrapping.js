@@ -5,8 +5,7 @@ async function getDataScrapping (ciudad = 'Holanda', camas = '4'){
     
     try {
            const browser = await puppeteer.launch({
-    headless: false,
-    defaultViewport: null,
+    headless: false
     });
 
     const page = await browser.newPage()
