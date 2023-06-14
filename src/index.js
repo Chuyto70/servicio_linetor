@@ -242,6 +242,8 @@ app.post('/', async (req,res)=>{
 app.post('/obtenertarifa', async(req,res)=>{
   let ciudad = req.body.ciudad
   let habitaciones = req.body.habitaciones
+  console.log(req.body)
+  
   let tarifas = await getDataScrapping(ciudad,habitaciones);
 
   if(tarifas.ok){

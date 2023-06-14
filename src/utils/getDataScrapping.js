@@ -4,9 +4,8 @@
 async function getDataScrapping (ciudad = 'Holanda', camas = '4'){
     const puppeteer = require('puppeteer');
     const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'], });
-    try {
-          
 
+    try {  
     const page = await browser.newPage()
 
     await page.goto("https://www.guestready.com/get-a-quote/", {
@@ -45,18 +44,22 @@ async function getDataScrapping (ciudad = 'Holanda', camas = '4'){
             p, porcentaje
         }
      })
-    await browser.close();
+    
     return {
         ok:true,
         precio
     }
     } catch (error) {
-        await browser.close();
+      
         return {
             ok:false,
             msg:'Error en el scrapping',
             error
         }
+    }finally{
+          let pages = await browser.pages(); 
+          await Promise.all(pages.map(page =>page.close()));  
+          await browser.close();
     }
  
 }
