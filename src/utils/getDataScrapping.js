@@ -7,16 +7,21 @@ async function getDataScrapping (ciudad = 'Holanda', camas = '4'){
 
     try {  
     const page = await browser.newPage()
-
-    await page.goto("https://www.guestready.com/get-a-quote/", {
-    waitUntil: "domcontentloaded",
-     });
-     await page.waitForSelector('.pac-target-input')
-     await page.waitForSelector('.get-estimate-widget__submit')
     
-     await page.type('.pac-target-input', ciudad)
+    page.setDefaultNavigationTimeout( 90000 )
+    await page.setViewport( { 'width' : 1024, 'height' : 1600 } );
+    
+    await page.goto("https://www.guestready.com/get-a-quote/",{ 'waitUntil' : 'domcontentloaded' });
+     
+     await page.waitForSelector('.pac-target-input')
+    
+    
+     await page.type('.pac-target-input', ciudad, {delay:50})
+     await page.waitForTimeout(500)
      await page.waitForSelector('.pac-item')
      await page.click('.pac-item')
+     await page.waitForSelector('.get-estimate-widget__submit')
+     await page.waitForSelector('.get-estimate-widget__bedrooms')
      await page.select('.get-estimate-widget__bedrooms',camas)
 
      await page.evaluate(()=>{
@@ -50,7 +55,8 @@ async function getDataScrapping (ciudad = 'Holanda', camas = '4'){
         precio
     }
     } catch (error) {
-      
+        console.log('AQUI EL ERROR EN EL CATCH')
+        console.log(error)
         return {
             ok:false,
             msg:'Error en el scrapping',
