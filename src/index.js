@@ -5,9 +5,13 @@ const { getConnection } = require('./service.js')
 const cors = require('cors')
 const { getDataScrapping } = require('./utils/getDataScrapping.js')
 const app = express()   
+const axios = require('axios');
+
 
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.json());
+
 
 //Datos del usuario de PRUEBA
 app.get('/', async (req,res)=>{
@@ -240,25 +244,43 @@ app.post('/', async (req,res)=>{
 
 
 app.post('/obtenertarifa', async(req,res)=>{
-  let ciudad = req.body.ciudad
-  let habitaciones = req.body.habitaciones
-  console.log(req.body)
+
+  let TARIFA_URL='https://api.calculator.guestready.com/api/v1/leads/estimate'
+  let { address, coordinates, number_of_bedrooms, context,original_source, calculator_path } = req.body
+
+ let data =  { address, coordinates, number_of_bedrooms, context,original_source, calculator_path }
+
+
+ let respuesta=  await axios.post(TARIFA_URL, data)
+ let tarifa = respuesta.data 
+
+ if(tarifa){
+   res.status(200).json({ok:true,p:tarifa})
+ }else{
+  res.status(500).json({ok:false, msg:'Ha ocurrido un error en el servidor'})
+ }
+
+
+
+
+  // let ciudad = req.body.ciudad
+  // let habitaciones = req.body.habitaciones
   
-  let tarifas = await getDataScrapping(ciudad,habitaciones);
+  // let tarifas = await getDataScrapping(ciudad,habitaciones);
 
-  if(tarifas.ok){
-    if(tarifas.precio.p.length <3){
-      res.status(400).json({
-        ok:false,
-        msg:'Vuelva a intentarlo'
-      })
-    }else{
+  // if(tarifas.ok){
+  //   if(tarifas.precio.p.length <3){
+  //     res.status(400).json({
+  //       ok:false,
+  //       msg:'Vuelva a intentarlo'
+  //     })
+  //   }else{
 
-      res.status(200).json(tarifas)
-    }
-  }else{
-    res.status(400).json(tarifas)
-  }
+  //     res.status(200).json(tarifas)
+  //   }
+  // }else{
+  //   res.status(400).json(tarifas)
+  // }
 })
 
 app.listen(2727, () => {
