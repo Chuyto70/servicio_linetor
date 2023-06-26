@@ -100,6 +100,7 @@ app.get('/facturas/:id', async (req, res) => {
     INNER JOIN FOXCLEA_TAREAS.bmdiario J ON J.factura = E.NUMERO
     INNER JOIN FOXCLEA_TAREAS.BMFDETALLE G ON G.FACTURA = E.NUMERO
     WHERE C.ID_PROPIETARIO = ${id} AND J.ptadebe > 0 AND E.fecha >= DATEFROMPARTS(2023, 4, 1)
+    ORDER BY fecha DESC
   `
    await sql.close()
 
