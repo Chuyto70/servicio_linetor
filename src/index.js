@@ -47,7 +47,7 @@ app.get('/reservas/:id', async(req, res) =>{
   let { recordsets:reservas } = await pool.request().query`
   SELECT A.ID_RESERVA, A.FECHA_ENTRADA, A.FECHA_SALIDA, A.PRECIO, A.SUPLIMPIEZA, A.COMISION, A.ESTADO, A.PORCENTAJE_LINETOR, A.GASTOLIMPIEZAACOBRAR_PROPIETARIO, B.NOMBRE, B.APELLIDO FROM [FOXCLEA_TAREAS].[foxclea_tareas].[AV_RESERVAS] A
   INNER JOIN FOXCLEA_TAREAS.AV_CLIENTES B ON B.ID_CLIENTE = A.ID_CLIENTE
-  WHERE A.id_propiedad = ${id}
+  WHERE A.id_propiedad = ${id} AND A.ESTADO IN ('PENDIENTE', 'FINALIZADA', 'ACTIVA')
   `
   await sql.close()
 
